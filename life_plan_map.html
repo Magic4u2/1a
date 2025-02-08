@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid black;
+            padding: 5px;
+            position: relative;
+            margin: 0 auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(52, 16px);
+            border: 2px solid black;
+        }
+        .cell {
+            width: 16px;
+            height: 16px;
+            background-color: lightgray;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .row-label {
+            width: 30px;
+            text-align: right;
+            margin-right: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .week-numbers {
+            display: grid;
+            grid-template-columns: repeat(52, 16px);
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid black;
+            border-bottom: none;
+            margin-left: 35px;
+        }
+        .week-numbers span {
+            width: 16px;
+            text-align: center;
+            border-right: 1px solid black;
+            padding: 2px 0;
+        }
+        .week-label {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            border: 2px solid black;
+            border-bottom: none;
+            padding: 10px;
+            margin-left: 0;
+        }
+        .life-label {
+            font-size: 32px;
+            font-weight: bold;
+            color: black;
+            writing-mode: vertical-rl;
+            text-align: center;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .color-picker button {
+            width: 30px;
+            height: 30px;
+            border: 4px solid black;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .color-name {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .color-picker button.selected1 {
+            border: 4px solid yellow;
+            box-shadow: 0px 0px 15px yellow;
+            transform: scale(1.2);
+        }
+        .color-picker button.selected2 {
+            border: 4px solid orange;
+            box-shadow: 0px 0px 15px orange;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const colors = ["#FFFFFF", "#FFD700", "#FFFF00", "#FF7F00", "#FF0000", "#00FF00", "#00FFFF", "#0000FF", "#4B0082", "#9400D3", "#FF1493", "#555555", "#222222", "#000000"];
+        let colorNames = Array(colors.length).fill("");
+        let selectedColor1 = null;
+        let selectedColor2 = null;
+        
+        function highlightSelectedColors() {
+            document.querySelectorAll('.color-picker button').forEach(btn => {
+                btn.classList.remove('selected1', 'selected2');
+            });
+            
+            if (selectedColor1 !== null) {
+                document.getElementById(`btn-${selectedColor1}`).classList.add('selected1');
+            }
+            if (selectedColor2 !== null) {
+                document.getElementById(`btn-${selectedColor2}`).classList.add('selected2');
+            }
+        }
+        
+        function setColor(index) {
+            if (selectedColor1 === index) {
+                selectedColor1 = null;
+            } else if (selectedColor2 === index) {
+                selectedColor2 = null;
+            } else if (selectedColor1 === null) {
+                selectedColor1 = index;
+            } else {
+                selectedColor2 = index;
+            }
+            highlightSelectedColors();
+        }
+        
+        function toggleColor(event) {
+            if (event.target.style.background === "lightgray") {
+                if (selectedColor1 !== null && selectedColor2 !== null) {
+                    event.target.style.background = `linear-gradient(to bottom, ${colors[selectedColor1]} 50%, ${colors[selectedColor2]} 50%)`;
+                } else if (selectedColor1 !== null) {
+                    event.target.style.backgroundColor = colors[selectedColor1];
+                }
+            } else {
+                event.target.style.background = "lightgray";
+            }
+        }
+        
+        function updateColorName(index) {
+            let input = document.getElementById(`color-name-${index}`).value;
+            colorNames[index] = input;
+        }
+    </script>
+    
+    <div class="container">
+        <div class="color-picker">
+            <script>
+                colors.forEach((color, index) => {
+                    document.write(`<div style="display: flex; flex-direction: column; align-items: center;">
+                        <button id="btn-${index}" style="background-color:${color}" onclick="setColor(${index})"></button>
+                        <input type="text" id="color-name-${index}" class="color-name" placeholder="Name" oninput="updateColorName(${index})">
+                    </div>`);
+                });
+            </script>
+        </div>
+        <div class="grid-container">
+            <div class="week-label">Weeks of the year</div>
+            <div class="life-label">Life expectancy</div>
+            <div class="week-numbers">
+                <script>
+                    for (let j = 1; j <= 52; j++) {
+                        document.write(`<span>${j}</span>`);
+                    }
+                </script>
+            </div>
+            <script>
+                for (let i = 0; i < 85; i++) {
+                    document.write('<div class="row">');
+                    document.write(`<span class="row-label">${i + 1}</span>`);
+                    document.write('<div class="grid">');
+                    for (let j = 0; j < 52; j++) {
+                        document.write('<div class="cell" onclick="toggleColor(event)"></div>');
+                    }
+                    document.write('</div></div>');
+                }
+            </script>
+        </div>
+    </div>
+</body>
+</html>
